@@ -1,0 +1,6 @@
+{
+  "[html]" : {
+    "editor.defaultFormatter": "vscode.html-language-features"
+  },
+  "python.pythonPath": "/home/deepak/Workspace/Python-stuff/virtual-envs/dparcel/bin/python3"
+}
