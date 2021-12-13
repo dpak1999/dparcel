@@ -2,6 +2,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from core import views
+from core.customer import views as customer_views
+from core.courier import views as courier_views
+
+customer_url_patterns = [
+    path('', customer_views.home, name="home")
+]
+
+courier_url_patterns = [
+    path('', courier_views.home, name="home")
+]
 
 urlpatterns = [
     # admin
@@ -19,6 +29,6 @@ urlpatterns = [
     path("sign-up/", views.sign_up),
 
     # others
-    path("customer/", views.customer_page),
-    path("courier/", views.courier_page),
+    path("customer/", include((customer_url_patterns, 'customer'))),
+    path("courier/", include((courier_url_patterns, 'courier'))),
 ]
