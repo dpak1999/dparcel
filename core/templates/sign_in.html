@@ -30,6 +30,11 @@
                 <b>Sign Up</b>
               </a>
             </p>
+            <hr>
+            <a href="{% url 'social:begin' 'facebook' %}?next={{ request.GET.next }}"
+              class="btn btn-outline-primary btn-block">
+              Sign in with Facebook
+            </a>
           </form>
         </div>
       </div>
