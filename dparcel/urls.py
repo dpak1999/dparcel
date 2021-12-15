@@ -6,7 +6,8 @@ from core.customer import views as customer_views
 from core.courier import views as courier_views
 
 customer_url_patterns = [
-    path('', customer_views.home, name="home")
+    path('', customer_views.home, name="home"),
+    path('profile/', customer_views.profile_page, name="profile")
 ]
 
 courier_url_patterns = [
