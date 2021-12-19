@@ -50,11 +50,30 @@
   {% endblock %}
 
   <!-- footer -->
+  {% bootstrap_javascript jquery='full' %}
+
   <footer class="text-center mt-5 mb-5">
     &copy; <a href="https://dpak.tech" target="blank">www.dpak.tech</a>
   </footer>
 
-  {% bootstrap_javascript jquery='full' %}
+  <script src="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.css">
+
+  <script>
+    function toast(message, type) {
+      bootoast.toast({
+        position: "leftBottom",
+        timeout: 3,
+        message,
+        type
+      })
+    }
+    {% if messages %}
+    {% for message in messages %}
+    toast('{{ message }}', '{{ message.tags }}')
+    {% endfor %}
+    {% endif %}
+  </script>
 
 </body>
 
