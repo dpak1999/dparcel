@@ -53,7 +53,8 @@
 <div class="card mt-2 mb-5 bg-white">
   <div class="card-body">
     <div id="recaptcha-container"></div>
-    <div id="get-code" class="input-group mb-3">
+
+    <div id="get-code" class="input-group mb-3 {% if request.user.customer.phone_number %} d-none {% endif %}">
       <input type="text" class="form-control" placeholder="Enter your mobile number">
       <div class="input-group-append">
         <button class="btn btn-warning" type="button">Send code</button>
@@ -64,6 +65,13 @@
       <input type="text" class="form-control" placeholder="Verification code">
       <div class="input-group-append">
         <button class="btn btn-warning" type="button">Verify code</button>
+      </div>
+    </div>
+
+    <div id="change-phone" class="input-group mb-3 {% if not request.user.customer.phone_number %} d-none {% endif %}">
+      <input type="text" class="form-control" disabled value="{{ request.user.customer.phone_number }}">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Change phone number</button>
       </div>
     </div>
   </div>
@@ -124,6 +132,12 @@
         console.log("Error - ", error)
         toast(error.message, "error")
       });
+    })
+
+    $("#change-phone button").on("click", function () {
+      const code = $("#change-phone input").val()
+      $("#change-phone").addClass("d-none")
+      $("#get-code").removeClass("d-none")
     })
   })
 
