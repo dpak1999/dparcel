@@ -71,35 +71,54 @@
 
 <script>
 
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+  function onVerify(idToken) {
+    var form = document.createElement("form")
+    form.method = "POST"
+
+    var e1 = document.createElement("input")
+    e1.name = "id_token"
+    e1.value = idToken
+    form.appendChild(e1)
+
+    var e2 = document.createElement("input")
+    e2.name = "action"
+    e2.value = "update_phone"
+    form.appendChild(e2)
+
+    var e3 = document.createElement("input")
+    e3.name = "csrfmiddlewaretoken"
+    e3.value = "{{ csrf_token }}"
+    form.appendChild(e3)
+
+    document.body.appendChild(form)
+    form.submit()
+  }
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+    "size": "invisible"
+  });
 
   $(document).ready(function () {
     $("#get-code button").on("click", function () {
       const phoneNumber = $("#get-code input").val()
-      console.log(phoneNumber)
 
       firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
         .then((confirmationResult) => {
-          console.log(confirmationResult)
           window.confirmationResult = confirmationResult;
           $("#get-code").addClass("d-none")
           $("#verify").removeClass("d-none")
         }).catch((error) => {
-          console.log("Error - ", error)
           toast('Invalid phone number please enter phone number as +91-(your phone number)', "error")
         });
     })
 
     $("#verify button").on("click", function () {
       const code = $("#verify input").val()
-      console.log(code)
 
       confirmationResult.confirm(code).then((result) => {
         const user = result.user;
-        console.log(user)
-
         user.getIdToken().then(function (idToken) {
-          console.log("Token", idToken)
+          onVerify(idToken)
         })
       }).catch((error) => {
         console.log("Error - ", error)
