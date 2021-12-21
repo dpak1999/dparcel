@@ -17,6 +17,8 @@
 </head>
 
 <body>
+  {% bootstrap_javascript jquery='full' %}
+
   <!-- navabar -->
   <nav class="navbar {% if not request.user.is_authenticated %} navbar-expand-lg {% endif %} navbar-dark bg-info">
     <a class="navbar-brand" href="/">D-PARCEL</a>
@@ -49,8 +51,6 @@
   {% block content %}
   {% endblock %}
 
-  <!-- footer -->
-  {% bootstrap_javascript jquery='full' %}
 
   <footer class="text-center mt-5 mb-5">
     &copy; <a href="https://dpak.tech" target="blank">www.dpak.tech</a>

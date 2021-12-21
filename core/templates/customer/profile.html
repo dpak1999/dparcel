@@ -1,6 +1,29 @@
+<!-- @format -->
+
 {% extends 'customer/base.html' %}
 {% load bootstrap4 %}
 
+{% block head %}
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDj6YRuM6i-h6EgWr3M6H-f4EImXaZrO4k",
+    authDomain: "dparcel-aeb5e.firebaseapp.com",
+    projectId: "dparcel-aeb5e",
+    storageBucket: "dparcel-aeb5e.appspot.com",
+    messagingSenderId: "566105382238",
+    appId: "1:566105382238:web:3a0915294c54d2cb5a43cf"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+</script>
+{% endblock %}
 {% block main %}
 
 <strong class="text-secondary">Basic Information</strong>
@@ -11,9 +34,8 @@
       {% bootstrap_form user_form %}
       {% bootstrap_form customer_form %}
 
-      <input type="hidden" name="action" value="update_profile">
+      <input type="hidden" name="action" value="update_profile" />
       <button type="submit" class="btn btn-warning">Save</button>
-
     </form>
   </div>
 </div>
@@ -22,14 +44,49 @@
 <div class="card mt-2 mb-5 bg-white">
   <div class="card-body">
     <form method="POST" enctype="multipart/form-data">
-      {% csrf_token %}
-      {% bootstrap_form password_form %}
+      {% csrf_token %} {% bootstrap_form password_form %}
 
-      <input type="hidden" name="action" value="update_password">
+      <input type="hidden" name="action" value="update_password" />
       <button type="submit" class="btn btn-warning">Save</button>
-
     </form>
   </div>
 </div>
+
+<strong class="text-secondary">Phone number</strong>
+<div class="card mt-2 mb-5 bg-white">
+  <div class="card-body">
+    <div id="get-code" class="input-group mb-3">
+      <input type="text" class="form-control" placeholder="Enter your mobile number">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Send code</button>
+      </div>
+    </div>
+
+    <div id="verify" class="input-group mb-3 d-none">
+      <input type="text" class="form-control" placeholder="Verification code">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Verify code</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function () {
+    $("#get-code button").on("click", function () {
+      const phoneNumber = $("#get-code input").val()
+      console.log(phoneNumber)
+
+      $("#get-code").addClass("d-none")
+      $("#verify").removeClass("d-none")
+    })
+
+    $("#verify button").on("click", function () {
+      const code = $("#verify input").val()
+      console.log(code)
+    })
+  })
+
+</script>
 
 {% endblock %}
