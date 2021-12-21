@@ -4,13 +4,10 @@
 {% load bootstrap4 %}
 
 {% block head %}
-<script type="module">
-  // Import the functions you need from the SDKs you need
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
 
-  // Your web app's Firebase configuration
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyDj6YRuM6i-h6EgWr3M6H-f4EImXaZrO4k",
     authDomain: "dparcel-aeb5e.firebaseapp.com",
@@ -21,7 +18,7 @@
   };
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+  firebase.initializeApp(firebaseConfig)
 </script>
 {% endblock %}
 {% block main %}
@@ -55,6 +52,7 @@
 <strong class="text-secondary">Phone number</strong>
 <div class="card mt-2 mb-5 bg-white">
   <div class="card-body">
+    <div id="recaptcha-container"></div>
     <div id="get-code" class="input-group mb-3">
       <input type="text" class="form-control" placeholder="Enter your mobile number">
       <div class="input-group-append">
@@ -72,18 +70,41 @@
 </div>
 
 <script>
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container');
+
   $(document).ready(function () {
     $("#get-code button").on("click", function () {
       const phoneNumber = $("#get-code input").val()
       console.log(phoneNumber)
 
-      $("#get-code").addClass("d-none")
-      $("#verify").removeClass("d-none")
+      firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+        .then((confirmationResult) => {
+          console.log(confirmationResult)
+          window.confirmationResult = confirmationResult;
+          $("#get-code").addClass("d-none")
+          $("#verify").removeClass("d-none")
+        }).catch((error) => {
+          console.log("Error - ", error)
+          toast('Invalid phone number please enter phone number as +91-(your phone number)', "error")
+        });
     })
 
     $("#verify button").on("click", function () {
       const code = $("#verify input").val()
       console.log(code)
+
+      confirmationResult.confirm(code).then((result) => {
+        const user = result.user;
+        console.log(user)
+
+        user.getIdToken().then(function (idToken) {
+          console.log("Token", idToken)
+        })
+      }).catch((error) => {
+        console.log("Error - ", error)
+        toast(error.message, "error")
+      });
     })
   })
 
