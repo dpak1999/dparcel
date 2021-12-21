@@ -151,3 +151,6 @@ EMAIL_HOST_USER = 'testersen.11223344@gmail.com'
 EMAIL_HOST_PASSWORD = 'qwertytrewq'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'Dparcel <no-reply@dparcel.com>'
+
+FIREBASE_ADMIN_CREDS = os.path.join(
+    BASE_DIR, "dparcel-aeb5e-firebase-adminsdk-k07xk-e5403a4cd2.json")
