@@ -154,3 +154,5 @@ DEFAULT_FROM_EMAIL = 'Dparcel <no-reply@dparcel.com>'
 
 FIREBASE_ADMIN_CREDS = os.path.join(
     BASE_DIR, "dparcel-aeb5e-firebase-adminsdk-k07xk-e5403a4cd2.json")
+STRIPE_API_PUBLIC_KEY = 'pk_test_51K9WHVSG8Qkr9N0Sa18EH1gtps8IpW34VztiPNclrPff7WpYq599b1MkzGKR6Jp2ZcriFBUvZS4sWvUp6PjeIC5J002DcS4mHh'
+STRIPE_API_SECRET_KEY = 'sk_test_51K9WHVSG8Qkr9N0SDqbsDT2K9U5PUmmJQwztQz1BEderXshYwgO9kltlVtkYxVihFXxhAbyCsWOdKzjjR9fGlOH800ZH4aleIJ'
