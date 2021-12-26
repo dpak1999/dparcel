@@ -11,13 +11,15 @@
 
   {% load bootstrap4 %}
   {% bootstrap_css %}
+  {% bootstrap_javascript jquery='full' %}
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 
   {% block head %}
   {% endblock %}
 </head>
 
 <body>
-  {% bootstrap_javascript jquery='full' %}
 
   <!-- navabar -->
   <nav class="navbar {% if not request.user.is_authenticated %} navbar-expand-lg {% endif %} navbar-dark bg-info">
