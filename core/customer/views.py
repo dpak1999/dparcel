@@ -4,6 +4,7 @@ from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from core.customer import forms
+from core.models import *
 from django.contrib import messages
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
@@ -111,11 +112,33 @@ def payment_method_page(request):
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def create_job_page(request):
-    if not request.user.customer.stripe_payment_methods_id:
+    current_customer = request.user.customer
+    if not current_customer.stripe_payment_methods_id:
         return redirect(reverse('customer:payment_method'))
 
-    step1_form = forms.JobCreateStep1Form()
+    creating_job = Job.objects.filter(
+        customer=current_customer, status=Job.CREATING_STATUS).last()
+    step1_form = forms.JobCreateStep1Form(instance=creating_job)
+
+    if request.method == "POST":
+        if request.POST.get("step") == "1":
+            step1_form = forms.JobCreateStep1Form(
+                request.POST, request.FILES, instance=creating_job)
+
+            if step1_form.is_valid():
+                creating_job = step1_form.save(commit=False)
+                creating_job.customer = current_customer
+                creating_job.save()
+                return redirect(reverse('customer:create_job'))
+
+    # Get current step
+    if not creating_job:
+        current_step = 1
+    else:
+        current_step = 2
 
     return render(request, 'customer/create_job.html', {
-        "step1_form": step1_form
+        "step1_form": step1_form,
+        "job": creating_job,
+        "step": current_step
     })

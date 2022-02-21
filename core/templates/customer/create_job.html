@@ -32,7 +32,13 @@
       <div class="card">
         <div class="card-header">JOB SUMMARY</div>
         <div class="card-body">
+          {% if not job %}
           <p>Summary of job info will appear here</p>
+          {% else %}
+          <h4>{{job.name}}</h4>
+          <span>{{job.quantity}} Item</span> <br />
+          <span>{{job.get_size_display}} job</span> <br />
+          {% endif %}
         </div>
       </div>
     </div>
@@ -41,25 +47,25 @@
         <div class="card-body">
           <ul class="nav nav-pills nav-justified align-items-center" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-              <a href="#pills-info" role="tab" class="active" data-toggle="pill" id="pills-info-tab"
-                aria-controls="pills-info" aria-selected="true">Item Info</a>
+              <a href="#pills-info" role="tab" class="{% if step == 1 %}active{% endif %}" data-toggle="pill"
+                id="pills-info-tab" aria-controls="pills-info" aria-selected="true">Item Info</a>
             </li>
             <i class="fas fa-chevron-right"></i>
             <li class="nav-item" role="presentation">
-              <a href="#pills-pickup" role="tab" data-toggle="pill" id="pills-pickup-tab" aria-controls="pills-pickup"
-                aria-selected="true">Pickup</a>
-            </li>
-            <i class="fas fa-chevron-right"></i>
-
-            <li class="nav-item" role="presentation">
-              <a href="#pills-delivery" role="tab" data-toggle="pill" id="pills-delivery-tab"
-                aria-controls="pills-delivery" aria-selected="true">Delivery</a>
+              <a class="{% if step == 2 %}active{% endif %}" href="#pills-pickup" role="tab" data-toggle="pill"
+                id="pills-pickup-tab" aria-controls="pills-pickup" aria-selected="true">Pickup</a>
             </li>
             <i class="fas fa-chevron-right"></i>
 
             <li class="nav-item" role="presentation">
-              <a href="#pills-payment" role="tab" data-toggle="pill" id="pills-payment-tab"
-                aria-controls="pills-payment" aria-selected="true">Payment</a>
+              <a class="{% if step == 3 %}active{% endif %}" href="#pills-delivery" role="tab" data-toggle="pill"
+                id="pills-delivery-tab" aria-controls="pills-delivery" aria-selected="true">Delivery</a>
+            </li>
+            <i class="fas fa-chevron-right"></i>
+
+            <li class="nav-item" role="presentation">
+              <a class="{% if step == 4 %}active{% endif %}" href="#pills-payment" role="tab" data-toggle="pill"
+                id="pills-payment-tab" aria-controls="pills-payment" aria-selected="true">Payment</a>
             </li>
           </ul>
         </div>
@@ -67,7 +73,8 @@
 
       <strong>CREATE A JOB</strong>
       <div class="tab-content" id="pills-tabContent">
-        <div class="tab-pane fade show active" role="tabpanel" id="pills-info" aria-labelledby="pills-info-tab">
+        <div class="tab-pane fade {% if step == 1 %}show active{% endif %}" role="tabpanel" id="pills-info"
+          aria-labelledby="pills-info-tab">
           <h1>Item Info</h1>
           <form method="post" enctype="multipart/form-data">
             <strong class="text-secondary">Item Information</strong> <br />
@@ -81,13 +88,16 @@
             <button type="submit" class="btn btn-info">Save & continue</button>
           </form>
         </div>
-        <div class="tab-pane fade" role="tabpanel" id="pills-pickup" aria-labelledby="pills-pickup-tab">
+        <div class="tab-pane fade {% if step == 2 %}show active{% endif %}" role="tabpanel" id="pills-pickup"
+          aria-labelledby="pills-pickup-tab">
           <h1>Pickup</h1>
         </div>
-        <div class="tab-pane fade" role="tabpanel" id="pills-delivery" aria-labelledby="pills-delivery-tab">
+        <div class="tab-pane fade {% if step == 3 %}show active{% endif %}" role="tabpanel" id="pills-delivery"
+          aria-labelledby="pills-delivery-tab">
           <h1>Delivery</h1>
         </div>
-        <div class="tab-pane fade" role="tabpanel" id="pills-payment" aria-labelledby="pills-payment-tab">
+        <div class="tab-pane fade {% if step == 4 %}show active{% endif %}" role="tabpanel" id="pills-payment"
+          aria-labelledby="pills-payment-tab">
           <h1>Payment</h1>
         </div>
       </div>
