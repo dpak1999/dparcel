@@ -26,7 +26,8 @@
     text-decoration: none;
   }
 
-  #pickup-map {
+  #pickup-map,
+  #delivery-map {
     height: 100%;
   }
 </style>
@@ -54,10 +55,19 @@
           {% if step > 2 %}
           <hr />
           <p class="text-secondary">
-            <small><strong>PICKUP</strong></small>
+            <small><strong>PICKUP FROM</strong></small>
           </p>
           <h4>{{job.pickup_name}}</h4>
-          <span>{{job.pickup_address}} Item</span> <br />
+          <span>{{job.pickup_address}}</span> <br />
+          {% endif %}
+
+          {% if step > 3 %}
+          <hr />
+          <p class="text-secondary">
+            <small><strong>DELIVER TO</strong></small>
+          </p>
+          <h4>{{job.delivery_name}}</h4>
+          <span>{{job.delivery_address}}</span> <br />
           {% endif %}
 
           {% endif %}
@@ -128,9 +138,9 @@
                   </div>
                   <div class="col-lg-5">
                     <div id="pickup-map"></div>
-                    <div id="infowindow-content">
-                      <span id="place-name" class="title"></span><br />
-                      <span id="place-address"></span>
+                    <div id="pickup-infowindow-content">
+                      <span id="pickup-place-name" class="title"></span><br />
+                      <span id="pickup-place-address"></span>
                     </div>
 
                   </div>
@@ -146,6 +156,33 @@
         <div class="tab-pane fade {% if step == 3 %}show active{% endif %}" role="tabpanel" id="pills-delivery"
           aria-labelledby="pills-delivery-tab">
           <h1>Delivery</h1>
+
+          <form method="post" enctype="multipart/form-data">
+            <strong class="text-secondary">Delivery Information</strong> <br />
+            <div class="card bg-white mt-2 mb-5">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-lg-7">
+                    {% csrf_token %}
+                    {% bootstrap_form step3_form exclude='delivery_lat, delivery_lng' %}
+                    <input type="hidden" name="delivery_lat" value="{{job.delivery_lat}}" id="delivery_lat">
+                    <input type="hidden" name="delivery_lng" value="{{job.delivery_lng}}" id="delivery_lng">
+                  </div>
+                  <div class="col-lg-5">
+                    <div id="delivery-map"></div>
+                    <div id="delivery-infowindow-content">
+                      <span id="delivery-place-name" class="title"></span><br />
+                      <span id="delivery-place-address"></span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+            <input type="hidden" name="step" value="3">
+            <button type="button" class="btn btn-outline-info" onclick="$('#pills-info-tab').tab('show')">Back</button>
+            <button type="submit" class="btn btn-info">Save & continue</button>
+          </form>
         </div>
 
         <div class="tab-pane fade {% if step == 4 %}show active{% endif %}" role="tabpanel" id="pills-payment"
@@ -163,22 +200,25 @@
   var pickupLat = parseFloat('{{job.pickup_lat}}')
   var pickupLng = parseFloat('{{job.pickup_lng}}')
 
-  function initMap() {
-    const map = new google.maps.Map(document.getElementById("pickup-map"), {
-      center: { lat: pickupLat || 40.749933, lng: pickupLng || -73.98633 },
+  var deliveryLat = parseFloat('{{job.delivery_lat}}')
+  var deliveryLng = parseFloat('{{job.delivery_lng}}')
+
+  function initMapByType(type, initLat, initLng) {
+    const map = new google.maps.Map(document.getElementById(type + "-map"), {
+      center: { lat: initLat || 40.749933, lng: initLng || -73.98633 },
       zoom: 13,
       mapTypeControl: false,
     });
-    const input = document.getElementById("id_pickup_address");
+    const input = document.getElementById("id_" + type + "_address");
     const options = {
       fields: ["formatted_address", "geometry", "name"],
       strictBounds: false,
       types: ["establishment"],
     };
 
-    if (pickupLat && pickupLng) {
+    if (initLat && initLng) {
       new google.maps.Marker({
-        position: new google.maps.LatLng(pickupLat, pickupLng),
+        position: new google.maps.LatLng(initLat, initLng),
         map: map
       })
     }
@@ -191,7 +231,7 @@
     autocomplete.bindTo("bounds", map);
 
     const infowindow = new google.maps.InfoWindow();
-    const infowindowContent = document.getElementById("infowindow-content");
+    const infowindowContent = document.getElementById(type + "-infowindow-content");
 
     infowindow.setContent(infowindowContent);
 
@@ -223,17 +263,21 @@
 
       marker.setPosition(place.geometry.location);
       marker.setVisible(true);
-      infowindowContent.children["place-name"].textContent = place.name;
-      infowindowContent.children["place-address"].textContent =
+      infowindowContent.children[type + "-place-name"].textContent = place.name;
+      infowindowContent.children[type + "-place-address"].textContent =
         place.formatted_address;
       infowindow.open(map, marker);
 
-      $("#pickup_lat").val(place.geometry.location.lat())
-      $("#pickup_lng").val(place.geometry.location.lng())
+      $("#" + type + "_lat").val(place.geometry.location.lat())
+      $("#" + type + "_lng").val(place.geometry.location.lng())
     });
 
   }
 
+  function initMap() {
+    initMapByType("pickup", pickupLat, pickupLng)
+    initMapByType("delivery", deliveryLat, deliveryLng)
+  }
 </script>
 
 {% endblock %}
