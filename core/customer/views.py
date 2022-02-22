@@ -132,9 +132,18 @@ def create_job_page(request):
                 creating_job.save()
                 return redirect(reverse('customer:create_job'))
 
+        elif request.POST.get("step") == "2":
+            step2_form = forms.JobCreateStep2Form(
+                request.POST, instance=creating_job)
+            if step2_form.is_valid():
+                creating_job = step2_form.save()
+                return redirect(reverse('customer:create_job'))
+
     # Get current step
     if not creating_job:
         current_step = 1
+    elif creating_job.pickup_name:
+        current_step = 3
     else:
         current_step = 2
 
