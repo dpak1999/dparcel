@@ -10,6 +10,7 @@ from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from django.conf import settings
 import stripe
+import requests
 
 cred = credentials.Certificate(settings.FIREBASE_ADMIN_CREDS)
 firebase_admin.initialize_app(cred)
@@ -145,6 +146,29 @@ def create_job_page(request):
                 request.POST, instance=creating_job)
             if step3_form.is_valid():
                 creating_job = step3_form.save()
+                try:
+                    r = requests.get(
+                        "https://maps.googleapis.com/maps/api/distancematrix/json?origins={}&destinations={}&units=metric&key={}".format(
+                            creating_job.pickup_address,
+                            creating_job.delivery_address,
+                            settings.G_M_KEY,
+                        ))
+                    print(r.json())
+                    distance = r.json()[
+                        "rows"][0]["elements"][0]["distance"]["value"]
+                    duration = r.json()[
+                        "rows"][0]["elements"][0]["duration"]["value"]
+
+                    creating_job.distance = round(distance/1000, 2)
+                    creating_job.duration = int(duration/60)
+                    creating_job.price = creating_job.distance * 1  # 1USD per km
+                    creating_job.save()
+
+                except Exception as e:
+                    print(e)
+                    messages.error(
+                        request, "Unfortunately we don't support shipping here.")
+
                 return redirect(reverse('customer:create_job'))
 
     # Get current step
@@ -162,5 +186,6 @@ def create_job_page(request):
         "step2_form": step2_form,
         "step3_form": step3_form,
         "job": creating_job,
-        "step": current_step
+        "step": current_step,
+        "g_key": settings.G_M_KEY,
     })
