@@ -161,7 +161,7 @@ def create_job_page(request):
 
                     creating_job.distance = round(distance/1000, 2)
                     creating_job.duration = int(duration/60)
-                    creating_job.price = creating_job.distance * 1  # 1USD per km
+                    creating_job.price = creating_job.distance * 10  # 75 INR per km
                     creating_job.save()
 
                 except Exception as e:
@@ -171,7 +171,32 @@ def create_job_page(request):
 
                 return redirect(reverse('customer:create_job'))
 
-    # Get current step
+        elif request.POST.get("step") == '4':
+            if creating_job.price:
+                try:
+                    payment_intent = stripe.PaymentIntent.create(
+                        amount=int(creating_job.price * 100),
+                        currency="inr",
+                        customer=current_customer.stripe_customer_id,
+                        payment_method=current_customer.stripe_payment_methods_id,
+                        off_session=True,
+                        confirm=True
+                    )
+
+                    Transaction.objects.create(
+                        stripe_payment_intent_id=payment_intent['id'],
+                        job=creating_job,
+                        amount=creating_job.price,
+                    )
+                    creating_job.status = Job.PROCESSING_STATUS
+                    creating_job.save()
+
+                    return redirect(reverse('customer:home'))
+
+                except stripe.error.CardError as e:
+                    err = e.error
+                    print("Code is : %s" % err.code)
+            # Get current step
     if not creating_job:
         current_step = 1
     elif creating_job.delivery_name:
