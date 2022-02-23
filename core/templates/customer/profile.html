@@ -1,0 +1,146 @@
+<!-- @format -->
+
+{% extends 'customer/base.html' %}
+{% load bootstrap4 %}
+
+{% block head %}
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.2.1/firebase-auth.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyDj6YRuM6i-h6EgWr3M6H-f4EImXaZrO4k",
+    authDomain: "dparcel-aeb5e.firebaseapp.com",
+    projectId: "dparcel-aeb5e",
+    storageBucket: "dparcel-aeb5e.appspot.com",
+    messagingSenderId: "566105382238",
+    appId: "1:566105382238:web:3a0915294c54d2cb5a43cf"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig)
+</script>
+{% endblock %}
+{% block main %}
+
+<strong class="text-secondary">Basic Information</strong>
+<div class="card mt-2 mb-5 bg-white">
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      {% bootstrap_form user_form %}
+      {% bootstrap_form customer_form %}
+
+      <input type="hidden" name="action" value="update_profile" />
+      <button type="submit" class="btn btn-warning">Save</button>
+    </form>
+  </div>
+</div>
+
+<strong class="text-secondary">Change password</strong>
+<div class="card mt-2 mb-5 bg-white">
+  <div class="card-body">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %} {% bootstrap_form password_form %}
+
+      <input type="hidden" name="action" value="update_password" />
+      <button type="submit" class="btn btn-warning">Save</button>
+    </form>
+  </div>
+</div>
+
+<strong class="text-secondary">Phone number</strong>
+<div class="card mt-2 mb-5 bg-white">
+  <div class="card-body">
+    <div id="recaptcha-container"></div>
+
+    <div id="get-code" class="input-group mb-3 {% if request.user.customer.phone_number %} d-none {% endif %}">
+      <input type="text" class="form-control" placeholder="Enter your mobile number">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Send code</button>
+      </div>
+    </div>
+
+    <div id="verify" class="input-group mb-3 d-none">
+      <input type="text" class="form-control" placeholder="Verification code">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Verify code</button>
+      </div>
+    </div>
+
+    <div id="change-phone" class="input-group mb-3 {% if not request.user.customer.phone_number %} d-none {% endif %}">
+      <input type="text" class="form-control" disabled value="{{ request.user.customer.phone_number }}">
+      <div class="input-group-append">
+        <button class="btn btn-warning" type="button">Change phone number</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  function onVerify(idToken) {
+    var form = document.createElement("form")
+    form.method = "POST"
+
+    var e1 = document.createElement("input")
+    e1.name = "id_token"
+    e1.value = idToken
+    form.appendChild(e1)
+
+    var e2 = document.createElement("input")
+    e2.name = "action"
+    e2.value = "update_phone"
+    form.appendChild(e2)
+
+    var e3 = document.createElement("input")
+    e3.name = "csrfmiddlewaretoken"
+    e3.value = "{{ csrf_token }}"
+    form.appendChild(e3)
+
+    document.body.appendChild(form)
+    form.submit()
+  }
+
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+    "size": "invisible"
+  });
+
+  $(document).ready(function () {
+    $("#get-code button").on("click", function () {
+      const phoneNumber = $("#get-code input").val()
+
+      firebase.auth().signInWithPhoneNumber(phoneNumber, window.recaptchaVerifier)
+        .then((confirmationResult) => {
+          window.confirmationResult = confirmationResult;
+          $("#get-code").addClass("d-none")
+          $("#verify").removeClass("d-none")
+        }).catch((error) => {
+          toast('Invalid phone number please enter phone number as +91-(your phone number)', "error")
+        });
+    })
+
+    $("#verify button").on("click", function () {
+      const code = $("#verify input").val()
+
+      confirmationResult.confirm(code).then((result) => {
+        const user = result.user;
+        user.getIdToken().then(function (idToken) {
+          onVerify(idToken)
+        })
+      }).catch((error) => {
+        console.log("Error - ", error)
+        toast(error.message, "error")
+      });
+    })
+
+    $("#change-phone button").on("click", function () {
+      const code = $("#change-phone input").val()
+      $("#change-phone").addClass("d-none")
+      $("#get-code").removeClass("d-none")
+    })
+  })
+
+</script>
+
+{% endblock %}

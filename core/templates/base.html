@@ -11,41 +11,71 @@
 
   {% load bootstrap4 %}
   {% bootstrap_css %}
+  {% bootstrap_javascript jquery='full' %}
+
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
 
   {% block head %}
   {% endblock %}
 </head>
 
 <body>
+
   <!-- navabar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-info">
+  <nav class="navbar {% if not request.user.is_authenticated %} navbar-expand-lg {% endif %} navbar-dark bg-info">
     <a class="navbar-brand" href="/">D-PARCEL</a>
+
+    {% if not request.user.is_authenticated %}
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
       aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="/customer">Customer</a>
+        <li class="nav-item {% if request.GET.next != '/courier/' %}active{% endif %}">
+          <a class="nav-link" aria-current="page" href="/sign-in/?next=/customer/">Customer</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/courier">Courier</a>
+        <li class="nav-item {% if request.GET.next == '/courier/' %}active{% endif %}">
+          <a class="nav-link" href="/sign-in/?next=/courier/">Courier</a>
         </li>
       </ul>
     </div>
+
+    {% else %}
+    <form class="form-inline">
+      <span class="mr-4 text-white">{{ request.user.get_full_name|title }}</span>
+      <a href="/sign-out" class="btn text-white" style="border: 1px solid white;">Sign Out</a>
+    </form>
+    {% endif %}
   </nav>
 
   <!-- content -->
   {% block content %}
   {% endblock %}
 
-  <!-- footer -->
+
   <footer class="text-center mt-5 mb-5">
     &copy; <a href="https://dpak.tech" target="blank">www.dpak.tech</a>
   </footer>
 
-  {% bootstrap_javascript jquery='full' %}
+  <script src="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.css">
+
+  <script>
+    function toast(message, type) {
+      bootoast.toast({
+        position: "leftBottom",
+        timeout: 3,
+        message,
+        type
+      })
+    }
+    {% if messages %}
+    {% for message in messages %}
+    toast('{{ message }}', '{{ message.tags }}')
+    {% endfor %}
+    {% endif %}
+  </script>
 
 </body>
 

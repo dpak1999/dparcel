@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,8 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'core',
     'bootstrap4',
+    'social_django',
+    'core.apps.CoreConfig',
 ]
 
 MIDDLEWARE = [
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middlewares.ProfileMiddleware',
 ]
 
 ROOT_URLCONF = 'dparcel.urls'
@@ -64,6 +67,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -120,3 +125,35 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/sign-in/'
+LOGIN_REDIRECT_URL = '/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+MEDIA_URL = "/media/"
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_FACEBOOK_KEY = '1484070565310863    '
+SOCIAL_AUTH_FACEBOOK_SECRET = '9f3f0e4d0823fac7a5b512ba47683245'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+    'fields': 'id, name, email'
+}
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'testersen.11223344@gmail.com'
+EMAIL_HOST_PASSWORD = 'qwertytrewq'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'Dparcel <no-reply@dparcel.com>'
+
+FIREBASE_ADMIN_CREDS = os.path.join(
+    BASE_DIR, "dparcel-aeb5e-firebase-adminsdk-k07xk-e5403a4cd2.json")
+STRIPE_API_PUBLIC_KEY = 'pk_test_51K9WHVSG8Qkr9N0Sa18EH1gtps8IpW34VztiPNclrPff7WpYq599b1MkzGKR6Jp2ZcriFBUvZS4sWvUp6PjeIC5J002DcS4mHh'
+STRIPE_API_SECRET_KEY = 'sk_test_51K9WHVSG8Qkr9N0SDqbsDT2K9U5PUmmJQwztQz1BEderXshYwgO9kltlVtkYxVihFXxhAbyCsWOdKzjjR9fGlOH800ZH4aleIJ'
+G_M_KEY = 'AIzaSyBQJBOKEqLIQdSSr3q2ebPZH7phgyHEx3k'
