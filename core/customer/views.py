@@ -239,7 +239,7 @@ def current_jobs_page(request):
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def archived_jobs_page(request):
-    jobs = Job.objects.filter(customer=request.user.customer, status=[
+    jobs = Job.objects.filter(customer=request.user.customer, status__in=[
         Job.COMPLETED_STATUS, Job.CANCELLED_STATUS
     ])
 
@@ -251,6 +251,12 @@ def archived_jobs_page(request):
 @login_required(login_url="/sign-in/?next=/customer/")
 def job_page(request, job_id):
     job = Job.objects.get(id=job_id)
+
+    if request.method == "POST" and job.status == Job.PROCESSING_STATUS:
+        job.status = Job.CANCELLED_STATUS
+        job.save()
+        return redirect(reverse('customer:archived_jobs'))
+
     return render(request, 'customer/job.html', {
         "job": job,
         "G_M_KEY": settings.G_M_KEY
