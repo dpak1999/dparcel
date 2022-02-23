@@ -117,6 +117,16 @@ def create_job_page(request):
     if not current_customer.stripe_payment_methods_id:
         return redirect(reverse('customer:payment_method'))
 
+    has_current_job = Job.objects.filter(customer=current_customer, status__in=[
+        Job.PROCESSING_STATUS, Job.PICKING_STATUS, Job.DELIVERING_STATUS
+    ]).exists()
+
+    if has_current_job:
+        messages.warning(
+            request, "You currently have a job that is being processed"
+        )
+        return redirect(reverse('customer:current_jobs'))
+
     creating_job = Job.objects.filter(
         customer=current_customer, status=Job.CREATING_STATUS).last()
     step1_form = forms.JobCreateStep1Form(instance=creating_job)
@@ -218,7 +228,7 @@ def create_job_page(request):
 
 @login_required(login_url="/sign-in/?next=/customer/")
 def current_jobs_page(request):
-    jobs = Job.objects.filter(customer=request.user.customer, status=[
+    jobs = Job.objects.filter(customer=request.user.customer, status__in=[
         Job.PROCESSING_STATUS, Job.PICKING_STATUS, Job.DELIVERING_STATUS
     ])
 
