@@ -252,5 +252,6 @@ def archived_jobs_page(request):
 def job_page(request, job_id):
     job = Job.objects.get(id=job_id)
     return render(request, 'customer/job.html', {
-        "job": job
+        "job": job,
+        "G_M_KEY": settings.G_M_KEY
     })
