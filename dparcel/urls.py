@@ -19,7 +19,8 @@ customer_url_patterns = [
 ]
 
 courier_url_patterns = [
-    path('', courier_views.home, name="home")
+    path('', courier_views.home, name="home"),
+    path('jobs/available/', courier_views.available_jobs_page, name="available_jobs")
 ]
 
 urlpatterns = [
