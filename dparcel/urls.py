@@ -21,8 +21,12 @@ customer_url_patterns = [
 courier_url_patterns = [
     path('', courier_views.home, name="home"),
     path('jobs/available/', courier_views.available_jobs_page, name="available_jobs"),
-    path('api/jobs/available/', courier_apis.available_jobs_api,
-         name="available_jobs_api")
+    path('jobs/available/<id>/',
+         courier_views.available_job_page, name="available_job"),
+    path('api/jobs/available/',
+         courier_apis.available_jobs_api,
+         name="available_jobs_api"
+         )
 
 ]
 
