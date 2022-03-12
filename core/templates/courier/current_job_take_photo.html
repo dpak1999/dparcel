@@ -2,6 +2,8 @@
 {% load static %}
 {% block head %}
 
+<script src="{% static 'js/webCamEasy.min.js' %}"></script>
+
 <style>
   body {
     background-color: black;
@@ -31,10 +33,25 @@
     width: 100%;
     height: auto;
   }
+
+  #upload-step {
+    height: 100%;
+    display: none;
+    align-items: center;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
+
+<div id="upload-step">
+  <img id="photo">
+  <div class="buttons">
+    <a id="retake-button" class="btn btn-light" href="javascript:void(retake_photo())">Retake photo</a>
+    <a id="retake-button" class="btn btn-info" href="javascript:void(upload_photo())">Upload photo</a>
+  </div>
+</div>
+
 <div id="take_photo_step">
   <video id="webcam" autoplay playsinline></video>
   <canvas id="canvas" class="d-none"></canvas>
@@ -44,7 +61,32 @@
   </a>
 
   <div class="buttons">
-    <a href="#" class="btn btn-info">Take pickup photo</a>
+    <a href="javascript:void(take_photo())" class="btn btn-info">Take pickup photo</a>
   </div>
 </div>
+
+<script>
+
+  const webCamElement = document.getElementById("webcam")
+  const canvasElement = document.getElementById("canvas")
+
+  const webcam = new Webcam(webCamElement, "environment", canvasElement)
+  webcam.start()
+
+  function take_photo() {
+    let picture = webcam.snap()
+    console.log(picture)
+
+    $("#photo").attr("src", picture)
+    $("#take_photo_step").css("display", "none")
+    $("#upload-step").css("display", "flex")
+  }
+
+  function retake_photo() {
+    $("#upload-step").css("display", "none")
+    $("#take_photo_step").css("display", "flex")
+  }
+
+  function upload_photo() { }
+</script>
 {% endblock %}
