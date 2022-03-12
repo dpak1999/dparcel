@@ -1,0 +1,46 @@
+{% extends 'courier/base.html' %}
+{% load static %}
+
+{% block head %}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="media align-items-center bg-info p-3">
+  <img src="{% static 'img/avatar.png' %}" alt="..." class="rounded-circle" width="60" height="60">
+  <div class="media-body ml-4">
+    <h4 class="mb-0">{{request.user.get_full_name}}</h4>
+  </div>
+</div>
+
+<div class="mt-2 p-2">
+  <strong class="text-secondary">SUMMARY</strong>
+  <hr>
+
+  <div class="d-flex text-center">
+    <div class="flex-grow-1">
+      <h4 class="text-success">Rs {{total_earnings}}</h4>
+      <span class="text-secondary">Total Earnings</span>
+    </div>
+    <div class="flex-grow-1">
+      <h4 class="text-success">{{total_jobs}} Jobs</h4>
+      <span class="text-secondary">Completed</span>
+    </div>
+    <div class="flex-grow-1">
+      <h4 class="text-danger">{{total_distance}} Kms</h4>
+      <span class="text-secondary">Driven</span>
+    </div>
+  </div>
+  <hr>
+</div>
+
+<div class="p-2 text-center">
+  <a href="/sign-out/" class="btn btn-danger w-80 btn-md">
+    <i class="fas fa-sign-out-alt mr-1"></i>
+    Logout
+  </a>
+</div>
+
+{% include 'courier/bottom_tabs.html' %}
+{% endblock %}

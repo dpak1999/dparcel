@@ -83,3 +83,21 @@ def archived_jobs_page(request):
 @login_required(login_url="/sign-in/?next=/courier/")
 def job_complete_page(request):
     return render(request, "courier/job_complete.html")
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def profile_page(request):
+    jobs = Job.objects.filter(
+        courier=request.user.courier,
+        status=Job.COMPLETED_STATUS
+    )
+
+    total_earnings = round(sum(job.price for job in jobs) * 0.85, 2)
+    total_jobs = len(jobs)
+    total_distance = sum(job.distance for job in jobs)
+
+    return render(request, "courier/profile.html", {
+        "total_earnings": total_earnings,
+        "total_jobs": total_jobs,
+        "total_distance": total_distance,
+    })
