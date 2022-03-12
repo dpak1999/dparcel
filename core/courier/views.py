@@ -69,5 +69,17 @@ def current_job_take_photo_page(request, id):
 
 
 @login_required(login_url="/sign-in/?next=/courier/")
+def archived_jobs_page(request):
+    jobs = Job.objects.filter(
+        courier=request.user.courier,
+        status=Job.COMPLETED_STATUS
+    )
+
+    return render(request, "courier/archived_jobs.html", {
+        "jobs": jobs,
+    })
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
 def job_complete_page(request):
     return render(request, "courier/job_complete.html")
