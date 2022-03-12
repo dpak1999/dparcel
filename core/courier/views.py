@@ -48,3 +48,21 @@ def current_job_page(request):
         "job": job,
         "G_M_KEY": settings.G_M_KEY
     })
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def current_job_take_photo_page(request, id):
+    job = Job.objects.filter(
+        id=id,
+        courier=request.user.courier,
+        status__in=[
+            Job.PICKING_STATUS,
+            Job.DELIVERING_STATUS
+        ]).last()
+
+    if not job:
+        return redirect(reverse('courier:current_job'))
+
+    return render(request, "courier/current_job_take_photo.html", {
+        "job": job,
+    })
