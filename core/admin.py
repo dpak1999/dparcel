@@ -1,5 +1,13 @@
 from django.contrib import admin
+from django.conf import settings
+from paypalrestsdk import configure
 from . import models
+
+configure({
+    "mode": settings.PP_MODE,
+    "client_id": settings.PP_CL_ID,
+    "client_secret": settings.PP_CL_ST
+})
 
 
 class TransactionAdmin(admin.ModelAdmin):
