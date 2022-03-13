@@ -94,7 +94,7 @@ def profile_page(request):
         status=Job.COMPLETED_STATUS
     )
 
-    total_earnings = round(sum(job.price for job in jobs) * 0.85, 2)
+    total_earnings = round(sum(job.price for job in jobs) * 0.9, 2)
     total_jobs = len(jobs)
     total_distance = sum(job.distance for job in jobs)
 
