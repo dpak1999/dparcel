@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 from django.urls import reverse
 from django.conf import settings
+from core.courier import forms
 from core.models import *
 
 
@@ -100,4 +102,25 @@ def profile_page(request):
         "total_earnings": total_earnings,
         "total_jobs": total_jobs,
         "total_distance": total_distance,
+    })
+
+
+@login_required(login_url="/sign-in/?next=/courier/")
+def payout_method_page(request):
+    payout_form = forms.PayoutForm(instance=request.user.courier)
+
+    if request.method == "POST":
+        payout_form = forms.PayoutForm(
+            request.POST,
+            instance=request.user.courier
+        )
+
+        if payout_form.is_valid():
+            payout_form.save()
+
+            messages.success(request, "Payout address is updated")
+            return redirect(reverse('courier:profile'))
+
+    return render(request, "courier/payout_method.html", {
+        "payout_form": payout_form,
     })
