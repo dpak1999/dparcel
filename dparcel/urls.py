@@ -2,7 +2,7 @@ from re import template
 from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
-from core import views
+from core import consumers, views
 from core.customer import views as customer_views
 from core.courier import views as courier_views, apis as courier_apis
 from django.conf import settings
@@ -79,6 +79,10 @@ urlpatterns = [
              template_name="firebase-messaging-sw.js",
              content_type="application/javascript",
          ))),
+]
+
+websocket_urlpatterns = [
+    path('ws/jobs/<job_id>/', consumers.JobConsumer.as_asgi())
 ]
 
 if settings.DEBUG:
