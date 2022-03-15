@@ -32,6 +32,9 @@
   var deliveryLat = parseFloat("{{job.delivery_lat}}")
   var deliveryLng = parseFloat("{{job.delivery_lng}}")
 
+  var courierLat = parseFloat("{{job.courier.lat}}")
+  var courierLng = parseFloat("{{job.courier.lng}}")
+
   function initMap() {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -78,8 +81,28 @@
           map: map,
           icon: "{% static 'img/end.png' %}"
         })
+
+        window.courierMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(courierLat, courierLng),
+          map,
+          icon: "/static/img/courier.png"
+        })
       })
       .catch((e) => window.alert("Directions request failed due to " + status));
+  }
+
+  const jobSocket = new WebSocket(
+    "ws://" + window.location.host + "/ws/jobs/{{job.id}}/"
+  )
+  jobSocket.onmessage = function (e) {
+    var data = JSON.parse(e.data)
+    var job = data.job
+    console.log(job)
+
+    if (job.courier_lat && job.courier_lng) {
+      var courierPosition = new google.maps.LatLng(job.courier_lat, job.courier_lng)
+      window.courierMarker.setPosition(courierPosition)
+    }
   }
 </script>
 
