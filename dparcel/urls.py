@@ -3,7 +3,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from core import views
 from core.customer import views as customer_views
-from core.courier import views as courier_views
+from core.courier import views as courier_views, apis as courier_apis
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -19,7 +19,35 @@ customer_url_patterns = [
 ]
 
 courier_url_patterns = [
-    path('', courier_views.home, name="home")
+    path('', courier_views.home, name="home"),
+    path('jobs/available/', courier_views.available_jobs_page, name="available_jobs"),
+    path('jobs/current/', courier_views.current_job_page, name="current_job"),
+    path('jobs/complete/', courier_views.job_complete_page, name="job_complete"),
+    path('jobs/archived/', courier_views.archived_jobs_page, name="archived_jobs"),
+    path('profile/', courier_views.profile_page, name="profile"),
+    path('payout_method/', courier_views.payout_method_page, name="payout_method"),
+    path(
+        'jobs/current/<id>/take_photo/',
+        courier_views.current_job_take_photo_page,
+        name="current_job_take_photo"
+    ),
+    path(
+        'jobs/available/<id>/',
+        courier_views.available_job_page, name="available_job"
+    ),
+
+    # apis
+    path(
+        'api/jobs/available/',
+        courier_apis.available_jobs_api,
+        name="available_jobs_api"
+    ),
+    path(
+        'api/jobs/current/<id>/update/',
+        courier_apis.current_job_update_api,
+        name="current_job_update_api"
+    )
+
 ]
 
 urlpatterns = [
