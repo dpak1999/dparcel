@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'social_django',
     'core.apps.CoreConfig',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -163,3 +164,5 @@ PP_CL_ID = 'ATjc6c_8yESEpvSD1UjdGw5R3JzM0cl1dmySLdMWnhUV47ifm_YuIHw__Qg-ixuNQ1SP
 PP_CL_ST = 'EIZcU-TcN7zi93MhvBDZzD4y24NZZjHGn8wo-a2Wa7ZP45m4JCyLEAXI7-0kFxxDhrYuNeZ_8K0pn_5Y'
 
 NOTIFICATION_URL = 'https://e11e-45-115-89-97.ngrok.io'
+
+ASGI_APPLICATION = "dparcel.asgi.application"
