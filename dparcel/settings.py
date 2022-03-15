@@ -166,3 +166,11 @@ PP_CL_ST = 'EIZcU-TcN7zi93MhvBDZzD4y24NZZjHGn8wo-a2Wa7ZP45m4JCyLEAXI7-0kFxxDhrYu
 NOTIFICATION_URL = 'https://e11e-45-115-89-97.ngrok.io'
 
 ASGI_APPLICATION = "dparcel.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)]
+        }
+    }
+}
