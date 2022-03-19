@@ -1,5 +1,5 @@
 <!-- @format -->
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,10 +8,29 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Courier | Dparcel</title>
+  <link rel="shortcut icon" href="{% static 'img/logo.png' %}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/logo.png' %}">
+  <link rel="manifest" href="{% static 'manifest.json' %}">
+
 
   {% load bootstrap4 %}
   {% bootstrap_css %}
   {% bootstrap_javascript jquery='full' %}
+  {% include 'load_firebase.html' %}
+
+  <script>
+    const messaging = firebase.messaging()
+    messaging.getToken({
+      validKey: "BEL43TdqtK_LSsAJea0rUnZOlZkeNMTXXa3K2RNr8DVaKA8qbsMKT9nN97vNwONWFTx2EDlMiSNokDkvlbif480"
+    })
+      .then(currentToken => {
+        console.log(currentToken)
+        if (currentToken) {
+          fetch('{% url "courier:fcm_token_update_api" %}?fcm_token=' + currentToken)
+        }
+      })
+      .catch(e => console.log(e))
+  </script>
 
   <script>
     let vh = window.innerHeight * 0.01;
