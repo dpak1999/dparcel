@@ -1,0 +1,14 @@
+{
+  "short_name": "DParcel",
+  "name": "Welcome to dparcel",
+  "description": "Delivering from door to door",
+  "icons":[
+    {
+      "src": "/static/img/logo.png",
+      "type": "image/png",
+      "sizes":"512x512"
+    }
+  ],
+  "start_url": "/courier/",
+  "display": "standalone"
+}
