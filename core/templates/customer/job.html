@@ -32,6 +32,9 @@
   var deliveryLat = parseFloat("{{job.delivery_lat}}")
   var deliveryLng = parseFloat("{{job.delivery_lng}}")
 
+  var courierLat = parseFloat("{{job.courier.lat}}")
+  var courierLng = parseFloat("{{job.courier.lng}}")
+
   function initMap() {
     const directionsService = new google.maps.DirectionsService();
     const directionsRenderer = new google.maps.DirectionsRenderer();
@@ -78,8 +81,39 @@
           map: map,
           icon: "{% static 'img/end.png' %}"
         })
+
+        window.courierMarker = new google.maps.Marker({
+          position: new google.maps.LatLng(courierLat, courierLng),
+          map,
+          icon: "/static/img/courier.png"
+        })
       })
       .catch((e) => window.alert("Directions request failed due to " + status));
+  }
+
+  const jobSocket = new WebSocket(
+    "ws{% if request.get_host != 'localhost:8000' %}s{% endif %}://" + window.location.host + "/ws/jobs/{{job.id}}/"
+  )
+  jobSocket.onmessage = function (e) {
+    var data = JSON.parse(e.data)
+    var job = data.job
+    console.log(job)
+
+    if (job.courier_lat && job.courier_lng) {
+      var courierPosition = new google.maps.LatLng(job.courier_lat, job.courier_lng)
+      window.courierMarker.setPosition(courierPosition)
+    }
+
+    if (job.status) {
+      $('#job_status').html(job.status)
+      $('form').css("display", "none")
+    }
+    if (job.pickup_photo) {
+      $('#pickup_photo').html(`<img src="${job.pickup_photo}" class="rounded-lg photo" width="130" height="130">`)
+    }
+    if (job.delivery_photo) {
+      $('#delivery_photo').html(`<img src="${job.delivery_photo}" class="rounded-lg photo" width="130" height="130">`)
+    }
   }
 </script>
 
@@ -186,7 +220,7 @@
         </span><br />
         Mobile: {{job.delivery_phone}}</span>
       </div>
-      <div class="col-lg-4" id="pickup_photo">
+      <div class="col-lg-4" id="delivery_photo">
         {% if job.delivery_photo%}
         <img src="{{job.delivery_photo.url}}" class="rounded-lg photo" width="130" height="130" alt="...">
         {% else %}
@@ -205,7 +239,7 @@
     TRACK DELIVERY
   </strong>
   <div>
-    <span class="badge badge-warning">
+    <span id="job_status" class="badge badge-warning">
       {{job.get_status_display}}
     </span>
   </div>

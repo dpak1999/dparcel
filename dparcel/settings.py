@@ -26,7 +26,7 @@ SECRET_KEY = 'bm)uj#jdv&x^n=q7m@w5c++k&&_n^1nwupcc6t4ginp&f%3=+6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'bootstrap4',
     'social_django',
     'core.apps.CoreConfig',
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -157,3 +158,19 @@ FIREBASE_ADMIN_CREDS = os.path.join(
 STRIPE_API_PUBLIC_KEY = 'pk_test_51K9WHVSG8Qkr9N0Sa18EH1gtps8IpW34VztiPNclrPff7WpYq599b1MkzGKR6Jp2ZcriFBUvZS4sWvUp6PjeIC5J002DcS4mHh'
 STRIPE_API_SECRET_KEY = 'sk_test_51K9WHVSG8Qkr9N0SDqbsDT2K9U5PUmmJQwztQz1BEderXshYwgO9kltlVtkYxVihFXxhAbyCsWOdKzjjR9fGlOH800ZH4aleIJ'
 G_M_KEY = 'AIzaSyBQJBOKEqLIQdSSr3q2ebPZH7phgyHEx3k'
+
+PP_MODE = 'sandbox'
+PP_CL_ID = 'ATjc6c_8yESEpvSD1UjdGw5R3JzM0cl1dmySLdMWnhUV47ifm_YuIHw__Qg-ixuNQ1SPolCWyAH0VN6E'
+PP_CL_ST = 'EIZcU-TcN7zi93MhvBDZzD4y24NZZjHGn8wo-a2Wa7ZP45m4JCyLEAXI7-0kFxxDhrYuNeZ_8K0pn_5Y'
+
+NOTIFICATION_URL = 'https://e11e-45-115-89-97.ngrok.io'
+
+ASGI_APPLICATION = "dparcel.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)]
+        }
+    }
+}

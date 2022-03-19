@@ -1,5 +1,5 @@
 <!-- @format -->
-
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +8,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
+  <link rel="shortcut icon" href="{% static 'img/logo.png' %}">
 
   {% load bootstrap4 %}
   {% bootstrap_css %}
@@ -53,10 +54,10 @@
   {% block content %}
   {% endblock %}
 
-
+  <!-- 
   <footer class="text-center mt-5 mb-5">
     &copy; <a href="https://dpak.tech" target="blank">www.dpak.tech</a>
-  </footer>
+  </footer> -->
 
   <script src="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/bootoast@1.0.1/dist/bootoast.min.css">
