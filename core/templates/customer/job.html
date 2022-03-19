@@ -106,6 +106,7 @@
 
     if (job.status) {
       $('#job_status').html(job.status)
+      $('form').css("display", "none")
     }
     if (job.pickup_photo) {
       $('#pickup_photo').html(`<img src="${job.pickup_photo}" class="rounded-lg photo" width="130" height="130">`)

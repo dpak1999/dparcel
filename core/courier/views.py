@@ -5,6 +5,8 @@ from django.urls import reverse
 from django.conf import settings
 from core.courier import forms
 from core.models import *
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 
 @login_required(login_url="/sign-in/?next=/courier/")
@@ -30,6 +32,18 @@ def available_job_page(request, id):
         job.courier = request.user.courier
         job.status = Job.PICKING_STATUS
         job.save()
+
+        try:
+            layer = get_channel_layer()
+            async_to_sync(layer.group_send)("job_"+str(job.id), {
+                'type': 'job_update',
+                'job': {
+                    'status': job.get_status_display(),
+                }
+            })
+        except:
+            pass
+
         return redirect(reverse('courier:available_jobs'))
 
     return render(request, "courier/available_job.html", {
