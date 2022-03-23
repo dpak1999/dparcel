@@ -185,7 +185,7 @@ def create_job_page(request):
             if creating_job.price:
                 try:
                     payment_intent = stripe.PaymentIntent.create(
-                        amount=int(creating_job.price * 100),
+                        amount=round(int(creating_job.price * 100), 2),
                         currency="inr",
                         customer=current_customer.stripe_customer_id,
                         payment_method=current_customer.stripe_payment_methods_id,
